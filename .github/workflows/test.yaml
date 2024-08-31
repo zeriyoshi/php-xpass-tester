@@ -1,0 +1,21 @@
+name: CI
+on: push
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ELVER: ['8']
+        PHPVER: ['8.0', '8.1', '8.2', '8.3']
+        include:
+          - ELVER: '9'
+            PHPVER: '8.2'
+          - ELVER: '9'
+            PHPVER: '8.3'
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Build image
+          run: docker build --build-arg ELVER=${{ matrix.ELVER }} --build-arg PHPVER=${{ matrix.PHPVER }} -t test .
+        - name: Test php-xpass
+          run: docker run --rm -i test
